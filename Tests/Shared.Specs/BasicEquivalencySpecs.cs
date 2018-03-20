@@ -679,6 +679,23 @@ namespace FluentAssertions.Specs
             act.Should().Throw<XunitException>().WithMessage("Expected item[0].Id to be *-*, but found *-*");
         }
 
+        [Fact]
+        public void When_compere_subclass_as_baseclass_with_another_subclass_it_should_compere_all_properties_from_subclass()
+        {
+            var actual = new InheritsFromClassOne() { ValOne = 1, StringVal = "A" };
+            ClassOne expected = new InheritsFromClassOne() { ValOne = 1, StringVal = "B" };
+
+            //-----------------------------------------------------------------------------------------------------------
+            // Act
+            //-----------------------------------------------------------------------------------------------------------
+            Action act = () => actual.Should().BeEquivalentTo(expected);
+
+            //-----------------------------------------------------------------------------------------------------------
+            // Assert
+            //-----------------------------------------------------------------------------------------------------------
+            act.Should().Throw<XunitException>().WithMessage("Expected member StringVal to be \"B\", but \"A\" differs near \"A\" (index 0).*");
+        }   
+
         #endregion
 
         #region Selection Rules
@@ -3743,6 +3760,11 @@ namespace FluentAssertions.Specs
         public ClassTwo RefOne { get; set; } = new ClassTwo();
 
         public int ValOne { get; set; } = 1;
+    }
+
+    public class InheritsFromClassOne : ClassOne
+    {
+        public string StringVal { get; set; }
     }
 
     public class ClassTwo
